@@ -5,20 +5,19 @@
 */
 
 #include "vector.h"
-#include "finitefield.h"
 #include "stdlib.h"
 #include "string.h"
 
-#define BYTE unsigned char
 
 
+
+typedef unsigned char BYTE;
 
 typedef struct ByteVector
 {
     unsigned int    length;
     BYTE	    data[];	
 } ByteVector;
-
 
 
 
