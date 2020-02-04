@@ -107,3 +107,21 @@ BYTE ByteVector_Dot(ByteVector* vec, ByteVector* other, BYTE (*Add_Function)(BYT
 
     return sum;
 }
+
+
+void ByteVector_Shift(ByteVector* vec, unsigned int amount)
+{
+    ByteVector* tempVector = NULL;
+    unsigned int newPos = 0;
+
+    tempVector = ByteVector_New(vec->length);
+    ByteVector_Copy(vec, tempVector);
+
+    for (unsigned int i = 0; i < vec->length; i++)
+    {
+        newPos = (i + amount) % vec->length;
+        vec->data[newPos] = tempVector->data[i]; 
+    }
+
+    free(tempVector);
+}
