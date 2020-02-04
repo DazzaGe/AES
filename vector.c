@@ -5,16 +5,20 @@
 */
 
 #include "vector.h"
+#include "finitefield.h"
 #include "stdlib.h"
 #include "string.h"
+
+#define BYTE unsigned char
 
 
 
 typedef struct ByteVector
 {
-    unsigned int	length;
-    unsigned char	data[];	
+    unsigned int    length;
+    BYTE	    data[];	
 } ByteVector;
+
 
 
 
@@ -41,23 +45,66 @@ void ByteVector_Del(ByteVector* vec)
 }
 
 
-void ByteVector_Set_Index(ByteVector* vec, unsigned int pos, unsigned char value)
+unsigned int ByteVector_GetLength(ByteVector* vec) 
+{
+    return vec->length;
+}
+
+
+void ByteVector_SetIndex(ByteVector* vec, unsigned int pos, BYTE value)
 {
     if (pos < vec->length)
         (vec->data)[pos] = value;
 }
 
-void ByteVector_Set_Values(ByteVector* vec, unsigned char* values, unsigned int valuesLength)
+void ByteVector_SetValues(ByteVector* vec, BYTE* values, size_t valuesLength)
 {
     if (valuesLength <= vec->length)
 	memcpy(&(vec->data), values, valuesLength);
 }
 
 
-unsigned char ByteVector_Get_Index(ByteVector* vec, unsigned int pos)
+BYTE ByteVector_GetIndex(ByteVector* vec, unsigned int pos)
 {
     if (pos < vec->length)
         return (vec->data)[pos];
     else
         return 0;
+}
+
+
+void ByteVector_Copy(ByteVector* vec, ByteVector* copyto)
+{
+    if (vec->length == copyto->length)
+        memcpy(&(copyto->data), &(vec->data), vec->length);
+}
+
+
+void ByteVector_Add(ByteVector* vec, ByteVector* other, BYTE (*Add_Function)(BYTE val1, BYTE val2))
+{
+    if (vec->length != other->length) 
+        return;
+
+    for (unsigned int i = 0; i < vec->length; i++)
+    {
+        vec->data[i] = Add_Function(vec->data[i], other->data[i]);
+    }
+}
+
+BYTE ByteVector_Dot(ByteVector* vec, ByteVector* other, BYTE (*Add_Function)(BYTE val1, BYTE val2), BYTE (*Multiply_Function)(BYTE val1, BYTE val2))
+{
+    BYTE sum = 0;
+    BYTE product = 0;
+
+    if (vec->length != other->length)
+        return 0;
+
+    // multiplication via dot product
+    for (unsigned int i = 0; i < vec->length; i++)
+    {
+        product = Multiply_Function(vec->data[i], other->data[i]);
+        sum = Add_Function(sum, product); 
+    }
+
+    return sum;
 }

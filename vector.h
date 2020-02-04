@@ -2,6 +2,8 @@
 	AES
 */
 
+#include "stddef.h"
+
 
 
 
@@ -11,7 +13,14 @@ typedef struct ByteVector ByteVector;
 ByteVector*	 	ByteVector_New(unsigned int length);
 void			ByteVector_Del(ByteVector* vec);
 
-void			ByteVector_Set_Index(ByteVector* vec, unsigned int pos, unsigned char value);
-void			ByteVector_Set_Values(ByteVector* vec, unsigned char* values, unsigned int valuesLength);
+unsigned int            ByteVector_GetLength(ByteVector* vec); 
 
-unsigned char           ByteVector_Get_Index(ByteVector* vec, unsigned int pos);
+void			ByteVector_SetIndex(ByteVector* vec, unsigned int pos, unsigned char value);
+void			ByteVector_SetValues(ByteVector* vec, unsigned char* values, size_t valuesLength);
+
+unsigned char           ByteVector_GetIndex(ByteVector* vec, unsigned int pos);
+
+void                    ByteVector_Copy(ByteVector* vec, ByteVector* copyto);
+
+void                    ByteVector_Add(ByteVector* vec, ByteVector* other,unsigned char (*Add_Function)(unsigned char val1, unsigned char val2));
+unsigned char           ByteVector_Dot(ByteVector* vec, ByteVector* other, unsigned char (*Add_Function)(unsigned char val1, unsigned char val2), unsigned char (*Multiply_Function)(unsigned char val1, unsigned char val2));
