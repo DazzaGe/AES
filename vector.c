@@ -26,6 +26,7 @@ ByteVector* ByteVector_New(unsigned int length)
     ByteVector* newVector;
     size_t size;
 
+    if (length < 1) return NULL;
 
     size = sizeof(ByteVector) + length;
 
