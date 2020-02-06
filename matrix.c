@@ -6,8 +6,8 @@
 */
 
 #include "matrix.h"
-#include "vector.h"
 #include "stdlib.h"
+#include "stdio.h"
 
 
 
@@ -17,7 +17,7 @@ typedef struct ByteMatrix
     unsigned int    rows;
     unsigned int    columns;
     
-    unsigned char   data[];
+    unsigned char*  data[];
 } ByteMatrix;
 
 
@@ -26,17 +26,25 @@ typedef struct ByteMatrix
 ByteMatrix* ByteMatrix_New(unsigned int rows, unsigned int columns)
 {
     ByteMatrix* newMatrix = NULL; 
+    size_t pointerBlockSize = 0;
     size_t size = 0;
 
     if (rows < 1 || columns < 1) return NULL;
 
-    size = sizeof(ByteMatrix) + (rows * columns) - 1;
+    pointerBlockSize = rows * sizeof(unsigned char*);
+    size = sizeof(ByteMatrix) + pointerBlockSize + (rows * columns);
 
     newMatrix = (ByteMatrix*)malloc(size);
     if (newMatrix == NULL) return NULL;
     
     newMatrix->rows = rows;
     newMatrix->columns = columns;
+    for (unsigned int i = 0; i < rows; i++)
+    {
+        newMatrix->data[i] = (unsigned char*)&newMatrix->data + pointerBlockSize + (i * columns);
+    }
+
+    return newMatrix;
 }
 
 void ByteMatrix_Del(ByteMatrix* mat)
@@ -57,20 +65,49 @@ unsigned int ByteMatrix_GetColumns(ByteMatrix* mat)
 
 void ByteMatrix_SetIndex(ByteMatrix* mat, unsigned int row, unsigned int column, unsigned char value)
 {
-    unsigned int index = 0;
-
     if (row >= mat->rows || column >= mat->columns) return;
 
-    index = (row * mat->columns) + column;
-    mat->data[index] = value;
+    mat->data[row][column] = value;
 }
 
 unsigned char ByteMatrix_GetIndex(ByteMatrix* mat, unsigned int row, unsigned int column)
 {
-    unsigned int index = 0;
-
     if (row >= mat->rows || column >= mat->columns) return 0;
 
-    index = (row * mat->columns) + column;
-    return mat->data[index];
+    return mat->data[row][column];
+}
+
+
+ByteVector* ByteMatrix_GetRow(ByteMatrix* mat, unsigned int row)
+{
+    /*
+    ByteVector* rowVec = NULL;
+
+    if (row >= mat->rows) return NULL;
+
+    rowVec = ByteVector_New(mat->columns);
+    return rowVec;
+    */
+    return NULL;
+}
+
+void ByteMatrix_SetRow(ByteMatrix* mat, unsigned int row, ByteVector* vec)
+{
+    /*
+    if (row >= mat->rows || vec == NULL || ByteVector_GetLength(vec) != mat->columns) return;
+
+    for (unsigned int i = 0; i < mat->columns; i++)
+    {
+            
+    }
+    */
+}
+
+ByteVector* ByteMatrix_GetColumn(ByteMatrix* mat, unsigned int column)
+{
+    return NULL;
+}
+
+void ByteMatrix_SetColumn(ByteMatrix* mat, unsigned int column, ByteVector* vec)
+{
 }
