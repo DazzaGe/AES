@@ -180,3 +180,33 @@ void ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int a
     ByteMatrix_SetColumn(mat, column, tempColumn);
     ByteVector_Del(tempColumn);
 }
+
+
+ByteMatrix* ByteMatrix_Multiplication(ByteMatrix* mat, ByteMatrix* other,
+                unsigned char (*Add_Function)(unsigned char val1, unsigned char val2), \
+                unsigned char (*Multiply_Function)(unsigned char val1, unsigned char val2))
+{
+    ByteMatrix* resultMat = NULL;
+    ByteVector* rowVec = NULL;
+    ByteVector* colVec = NULL;
+    unsigned char dotResult = 0x00;
+
+    if (mat->columns != other->rows) return NULL;
+
+    resultMat = ByteMatrix_New(mat->rows, other->columns); 
+
+    for (unsigned int r = 0; r < mat->rows; r++)
+    {
+        rowVec = ByteMatrix_GetRow(mat, r);
+
+        for (unsigned int c = 0; c < mat->columns; c++)
+        {
+            colVec = ByteMatrix_GetColumn(other, c);
+
+            dotResult = ByteVector_Dot(rowVec, colVec, Add_Function, Multiply_Function);
+            resultMat->data[r][c] = dotResult;
+        }
+    }
+
+    return resultMat;
+}

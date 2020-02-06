@@ -28,3 +28,7 @@ void            ByteMatrix_SwapColumns(ByteMatrix* mat, unsigned int column1, un
 
 void            ByteMatrix_ShiftRow(ByteMatrix* mat, unsigned int row, unsigned int amount);
 void            ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int amount);
+
+ByteMatrix*     ByteMatrix_Multiplication(ByteMatrix* mat, ByteMatrix* other,
+                unsigned char (*Add_Function)(unsigned char val1, unsigned char val2), \
+                unsigned char (*Multiply_Function)(unsigned char val1, unsigned char val2));
