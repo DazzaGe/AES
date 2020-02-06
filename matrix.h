@@ -37,6 +37,9 @@ void            ByteMatrix_Add(ByteMatrix* mat, ByteMatrix* other, unsigned char
 ByteMatrix*     ByteMatrix_Mul(ByteMatrix* mat, ByteMatrix* other,
                 unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
                 unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2));
+ByteVector*     ByteMatrix_VectorMul(ByteMatrix* mat, ByteVector* vec, unsigned char lhs,
+                unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
+                unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2));
 
 
 

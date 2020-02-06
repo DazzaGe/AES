@@ -170,7 +170,6 @@ void ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int a
 
     if (column >= mat->columns) return;
 
-
     // very simple solution, but not very efficient, efficiency isn't needed as AES matrix's aren't big
     tempColumn = ByteMatrix_GetColumn(mat, column);
     ByteVector_Shift(tempColumn, amount);
@@ -221,4 +220,43 @@ ByteMatrix* ByteMatrix_Mul(ByteMatrix* mat, ByteMatrix* other,
     }
 
     return resultMat;
+}
+
+ByteVector* ByteMatrix_VectorMul(ByteMatrix* mat, ByteVector* vec, unsigned char lhs,
+                unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
+                unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2))
+{
+    ByteVector* resultVec = NULL;
+    ByteVector* matrixVec = NULL;
+    unsigned char dotResult = 0x00;
+    unsigned int vecLength = 0;
+
+    vecLength = ByteVector_GetLength(vec);
+
+    if (lhs == 1 && vecLength == mat->rows)
+    {
+        // vector on lhs
+        resultVec = ByteVector_New(vecLength);
+        for (unsigned int c = 0; c < vecLength; c++)
+        {
+            matrixVec = ByteMatrix_GetColumn(mat, c);
+            dotResult = ByteVector_Dot(vec, matrixVec, AddFunction, MultiplyFunction);
+            ByteVector_SetIndex(resultVec, c, dotResult);
+        }
+    }
+    else if (lhs == 0 && vecLength == mat->columns)
+    {
+        // vector on rhs
+        resultVec = ByteVector_New(vecLength);
+        for (unsigned int r = 0; r < vecLength; r++)
+        {
+            matrixVec = ByteMatrix_GetRow(mat, r);
+            dotResult = ByteVector_Dot(vec, matrixVec, AddFunction, MultiplyFunction);
+            ByteVector_SetIndex(resultVec, r, dotResult);
+        }
+    }
+    else
+        return NULL;
+
+    return resultVec;
 }
