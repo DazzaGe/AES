@@ -25,3 +25,6 @@ void            ByteMatrix_SetColumn(ByteMatrix* mat, unsigned int column, ByteV
 
 void            ByteMatrix_SwapRows(ByteMatrix* mat, unsigned int row1, unsigned int row2);
 void            ByteMatrix_SwapColumns(ByteMatrix* mat, unsigned int column1, unsigned int column2);
+
+void            ByteMatrix_ShiftRow(ByteMatrix* mat, unsigned int row, unsigned int amount);
+void            ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int amount);

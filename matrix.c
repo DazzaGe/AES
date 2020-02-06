@@ -150,3 +150,33 @@ void ByteMatrix_SwapColumns(ByteMatrix* mat, unsigned int column1, unsigned int 
         mat->data[r][column2] = temp;
     }
 }
+
+
+void ByteMatrix_ShiftRow(ByteMatrix* mat, unsigned int row, unsigned int amount)
+{
+    ByteVector* tempRow = NULL;
+
+    if (row >= mat->rows) return;   
+
+    // very simple solution, but not very efficient, efficiency isn't needed as AES matrix's aren't big
+    tempRow = ByteMatrix_GetRow(mat, row);
+    ByteVector_Shift(tempRow, amount);
+
+    ByteMatrix_SetRow(mat, row, tempRow);
+    ByteVector_Del(tempRow);
+}
+
+void ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int amount)
+{
+    ByteVector* tempColumn = NULL;
+
+    if (column >= mat->columns) return;
+
+
+    // very simple solution, but not very efficient, efficiency isn't needed as AES matrix's aren't big
+    tempColumn = ByteMatrix_GetColumn(mat, column);
+    ByteVector_Shift(tempColumn, amount);
+
+    ByteMatrix_SetColumn(mat, column, tempColumn);
+    ByteVector_Del(tempColumn);
+}
