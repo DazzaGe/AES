@@ -80,34 +80,47 @@ unsigned char ByteMatrix_GetIndex(ByteMatrix* mat, unsigned int row, unsigned in
 
 ByteVector* ByteMatrix_GetRow(ByteMatrix* mat, unsigned int row)
 {
-    /*
     ByteVector* rowVec = NULL;
 
     if (row >= mat->rows) return NULL;
 
     rowVec = ByteVector_New(mat->columns);
+    ByteVector_SetValues(rowVec, mat->data[row], mat->columns);
+
     return rowVec;
-    */
-    return NULL;
 }
 
 void ByteMatrix_SetRow(ByteMatrix* mat, unsigned int row, ByteVector* vec)
 {
-    /*
     if (row >= mat->rows || vec == NULL || ByteVector_GetLength(vec) != mat->columns) return;
 
-    for (unsigned int i = 0; i < mat->columns; i++)
+    for (unsigned int c = 0; c < mat->columns; c++)
     {
-            
+        mat->data[row][c] = ByteVector_GetIndex(vec, c);            
     }
-    */
 }
 
 ByteVector* ByteMatrix_GetColumn(ByteMatrix* mat, unsigned int column)
 {
-    return NULL;
+    ByteVector* columnVec = NULL;
+
+    if (column >= mat->columns) return NULL;
+
+    columnVec = ByteVector_New(mat->rows);
+    for (unsigned int r = 0; r < mat->rows; r++)
+    {
+        ByteVector_SetIndex(columnVec, r, mat->data[r][column]);
+    }
+
+    return columnVec;
 }
 
 void ByteMatrix_SetColumn(ByteMatrix* mat, unsigned int column, ByteVector* vec)
 {
+    if (column >= mat->columns || vec == NULL || ByteVector_GetLength(vec) != mat->rows) return;
+
+    for (unsigned int r = 0; r < mat->columns; r++)
+    {
+        mat->data[r][column] = ByteVector_GetIndex(vec, r);            
+    }
 }
