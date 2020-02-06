@@ -22,3 +22,6 @@ ByteVector*     ByteMatrix_GetRow(ByteMatrix* mat, unsigned int row);
 void            ByteMatrix_SetRow(ByteMatrix* mat, unsigned int row, ByteVector* vec);
 ByteVector*     ByteMatrix_GetColumn(ByteMatrix* mat, unsigned int column);
 void            ByteMatrix_SetColumn(ByteMatrix* mat, unsigned int column, ByteVector* vec);
+
+void            ByteMatrix_SwapRows(ByteMatrix* mat, unsigned int row1, unsigned int row2);
+void            ByteMatrix_SwapColumns(ByteMatrix* mat, unsigned int column1, unsigned int column2);

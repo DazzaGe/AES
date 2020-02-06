@@ -124,3 +124,29 @@ void ByteMatrix_SetColumn(ByteMatrix* mat, unsigned int column, ByteVector* vec)
         mat->data[r][column] = ByteVector_GetIndex(vec, r);            
     }
 }
+
+
+void ByteMatrix_SwapRows(ByteMatrix* mat, unsigned int row1, unsigned int row2)
+{
+    unsigned char* temp = NULL;
+
+    if (row1 >= mat->rows || row2 >= mat->rows) return;
+
+    temp = mat->data[row1];
+    mat->data[row1] = mat->data[row2];
+    mat->data[row2] = temp;
+}
+
+void ByteMatrix_SwapColumns(ByteMatrix* mat, unsigned int column1, unsigned int column2)
+{
+    unsigned char temp = 0x00;
+
+    if (column1 >= mat->columns || column2 >= mat->columns) return;
+
+    for (unsigned int r = 0; r < mat->rows; r++)
+    {
+        temp = mat->data[r][column1];
+        mat->data[r][column1] = mat->data[r][column2];
+        mat->data[r][column2] = temp;
+    }
+}
