@@ -7,7 +7,6 @@
 
 #include "matrix.h"
 #include "stdlib.h"
-#include "stdio.h"
 
 
 
@@ -19,7 +18,6 @@ typedef struct ByteMatrix
     
     unsigned char*  data[];
 } ByteMatrix;
-
 
 
 
@@ -182,9 +180,23 @@ void ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int a
 }
 
 
-ByteMatrix* ByteMatrix_Multiplication(ByteMatrix* mat, ByteMatrix* other,
-                unsigned char (*Add_Function)(unsigned char val1, unsigned char val2), \
-                unsigned char (*Multiply_Function)(unsigned char val1, unsigned char val2))
+void ByteMatrix_Add(ByteMatrix* mat, ByteMatrix* other, unsigned char (*AddFunction)(unsigned char val1, unsigned char val2))
+{
+    if (mat->rows != other->rows || mat->columns != other->columns) return;
+
+    for (unsigned int r = 0; r < mat->rows; r++)
+    {
+        for (unsigned int c = 0; c < mat->columns; c++)
+        {
+            mat->data[r][c] = AddFunction(mat->data[r][c], other->data[r][c]);
+        }
+    }
+}
+
+
+ByteMatrix* ByteMatrix_Mul(ByteMatrix* mat, ByteMatrix* other,
+                unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
+                unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2))
 {
     ByteMatrix* resultMat = NULL;
     ByteVector* rowVec = NULL;
@@ -203,7 +215,7 @@ ByteMatrix* ByteMatrix_Multiplication(ByteMatrix* mat, ByteMatrix* other,
         {
             colVec = ByteMatrix_GetColumn(other, c);
 
-            dotResult = ByteVector_Dot(rowVec, colVec, Add_Function, Multiply_Function);
+            dotResult = ByteVector_Dot(rowVec, colVec, AddFunction, MultiplyFunction);
             resultMat->data[r][c] = dotResult;
         }
     }

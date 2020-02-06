@@ -80,18 +80,18 @@ void ByteVector_Copy(ByteVector* vec, ByteVector* copyto)
 }
 
 
-void ByteVector_Add(ByteVector* vec, ByteVector* other, BYTE (*Add_Function)(BYTE val1, BYTE val2))
+void ByteVector_Add(ByteVector* vec, ByteVector* other, BYTE (*AddFunction)(BYTE val1, BYTE val2))
 {
     if (vec->length != other->length) 
         return;
 
     for (unsigned int i = 0; i < vec->length; i++)
     {
-        vec->data[i] = Add_Function(vec->data[i], other->data[i]);
+        vec->data[i] = AddFunction(vec->data[i], other->data[i]);
     }
 }
 
-BYTE ByteVector_Dot(ByteVector* vec, ByteVector* other, BYTE (*Add_Function)(BYTE val1, BYTE val2), BYTE (*Multiply_Function)(BYTE val1, BYTE val2))
+BYTE ByteVector_Dot(ByteVector* vec, ByteVector* other, BYTE (*AddFunction)(BYTE val1, BYTE val2), BYTE (*MultiplyFunction)(BYTE val1, BYTE val2))
 {
     BYTE sum = 0;
     BYTE product = 0;
@@ -102,8 +102,8 @@ BYTE ByteVector_Dot(ByteVector* vec, ByteVector* other, BYTE (*Add_Function)(BYT
     // multiplication via dot product
     for (unsigned int i = 0; i < vec->length; i++)
     {
-        product = Multiply_Function(vec->data[i], other->data[i]);
-        sum = Add_Function(sum, product); 
+        product = MultiplyFunction(vec->data[i], other->data[i]);
+        sum = AddFunction(sum, product); 
     }
 
     return sum;
