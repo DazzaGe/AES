@@ -206,12 +206,12 @@ ByteMatrix* ByteMatrix_Mul(ByteMatrix* mat, ByteMatrix* other,
     if (mat->columns != other->rows) return NULL;
 
     resultMat = ByteMatrix_New(mat->rows, other->columns); 
-
+    
     for (unsigned int r = 0; r < mat->rows; r++)
     {
         rowVec = ByteMatrix_GetRow(mat, r);
 
-        for (unsigned int c = 0; c < mat->columns; c++)
+        for (unsigned int c = 0; c < other->columns; c++)
         {
             colVec = ByteMatrix_GetColumn(other, c);
 
