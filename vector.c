@@ -57,19 +57,25 @@ void ByteVector_SetIndex(ByteVector* vec, unsigned int pos, BYTE value)
         (vec->data)[pos] = value;
 }
 
-void ByteVector_SetValues(ByteVector* vec, BYTE* values, size_t valuesLength)
-{
-    if (valuesLength <= vec->length)
-	memcpy(&(vec->data), values, valuesLength);
-}
-
-
 BYTE ByteVector_GetIndex(ByteVector* vec, unsigned int pos)
 {
     if (pos < vec->length)
         return (vec->data)[pos];
     else
         return 0;
+}
+
+
+void ByteVector_SetValues(ByteVector* vec, const BYTE* values, size_t valuesLength)
+{
+    if (valuesLength <= vec->length)
+	memcpy(&(vec->data), values, valuesLength);
+}
+
+void ByteVector_GetValues(ByteVector* vec, BYTE* toWrite, size_t amount)
+{
+    if (amount <= vec->length)
+        memcpy(toWrite, &(vec->data), amount);
 }
 
 

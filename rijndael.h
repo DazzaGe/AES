@@ -6,8 +6,12 @@
 
 
 
+#define Nb 4
 
-void    SubBytes(ByteMatrix* state_array);
-void    ShiftRows(ByteMatrix* state_array);
-void    MixColumns(ByteMatrix* state_array);
-void    AddRoundKey(ByteMatrix* state_array);
+
+
+
+void    SubBytes(unsigned char state[4][Nb]);
+void    ShiftRows(unsigned char state[4][Nb]);
+void    MixColumns(unsigned char state[4][Nb]);
+void    AddRoundKey(unsigned char state[4][Nb], unsigned char* key);

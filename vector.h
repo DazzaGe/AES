@@ -19,9 +19,10 @@ void			ByteVector_Del(ByteVector* vec);
 unsigned int            ByteVector_GetLength(ByteVector* vec); 
 
 void			ByteVector_SetIndex(ByteVector* vec, unsigned int pos, unsigned char value);
-void			ByteVector_SetValues(ByteVector* vec, unsigned char* values, size_t valuesLength);      // copy bytes from bytearray to vector
-
 unsigned char           ByteVector_GetIndex(ByteVector* vec, unsigned int pos);
+
+void			ByteVector_SetValues(ByteVector* vec, const unsigned char* values, size_t valuesLength);      // copy bytes from bytearray to vector
+void                    ByteVector_GetValues(ByteVector* vec, unsigned char* toWrite, size_t amount);
 
 void                    ByteVector_Copy(ByteVector* vec, ByteVector* copyto);   // copy values from first parameter into second
 
