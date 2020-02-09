@@ -3,6 +3,7 @@
 */
 
 #include "matrix.h"
+#include "stdint.h"
 
 
 
@@ -11,12 +12,6 @@
 
 
 
-void    Rijndael_Cipher(unsigned char state[Nb][4], unsigned char* keySchedule, unsigned int Nr);
+void    Rijndael_Cipher(uint8_t state[Nb][4], uint32_t* keySchedule, unsigned int Nr);
 void    Rijndael_InvCipher();
-void    Rijndael_KeyExpansion(unsigned char* key, unsigned char* keySchedule, unsigned int Nk, unsigned int Nr);
-
-void    SubBytes(unsigned char state[Nb][4]);
-void    ShiftRows(unsigned char state[Nb][4]);
-void    MixColumns(unsigned char state[Nb][4]);
-void    AddRoundKey(unsigned char state[Nb][4], unsigned char* key);
-
+void    Rijndael_KeyExpansion(uint32_t* key, uint32_t* keySchedule, unsigned int Nk, unsigned int Nr);

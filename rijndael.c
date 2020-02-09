@@ -6,12 +6,11 @@
 
 #include "rijndael.h"
 #include "finitefield.h"
-#include "stdio.h"
 
 
 
 
-const unsigned char const affine_matrix_array[64] =  {1, 0, 0, 0, 1, 1, 1, 1, 
+const uint8_t const affine_matrix_array[64] =  {1, 0, 0, 0, 1, 1, 1, 1, 
                                                 1, 1, 0, 0, 0, 1, 1, 1,
                                                 1, 1, 1, 0, 0, 0, 1, 1,
                                                 1, 1, 1, 1, 0, 0, 0, 1,
@@ -19,18 +18,19 @@ const unsigned char const affine_matrix_array[64] =  {1, 0, 0, 0, 1, 1, 1, 1,
                                                 0, 1, 1, 1, 1, 1, 0, 0,
                                                 0, 0, 1, 1, 1, 1, 1, 0,
                                                 0, 0, 0, 1, 1, 1, 1, 1};
-const unsigned char const affine_vector = 0x63;
-const unsigned char const mixcolumns_vector[4] = {0x02, 0x01, 0x01, 0x03};
+const uint8_t affine_vector = 0x63;
+const uint8_t const mixcolumns_vector[4] = {0x02, 0x01, 0x01, 0x03};
 const unsigned int shift_rows_amount[4] = {0, 1, 2, 3};
+const uint32_t const Rcon[8] = {1, 2, 4, 8, 16, 32, 64, 128};
 
 
 
-unsigned char SimpleMultiply(unsigned char b1, unsigned char b2)
+uint8_t SimpleMultiply(uint8_t b1, uint8_t b2)
 {
     return b1 * b2;
 }
 
-unsigned char SBox(unsigned char byte)
+uint8_t SBox(uint8_t byte)
 {
     // this will be using the less efficient manual way
     // of implementing the SBox for fun, obviously using
@@ -72,7 +72,7 @@ unsigned char SBox(unsigned char byte)
     return byte;
 }
 
-void SubBytes(unsigned char state[Nb][4])
+void SubBytes(uint8_t state[Nb][4])
 {
     for (unsigned int c = 0; c < Nb; c++)
     {
@@ -84,9 +84,9 @@ void SubBytes(unsigned char state[Nb][4])
 }
 
 
-void ShiftRows(unsigned char state[Nb][4])
+void ShiftRows(uint8_t state[Nb][4])
 {
-    unsigned char shifted[Nb][4];
+    uint8_t shifted[Nb][4];
     unsigned int newPos = 0;
 
     for (unsigned int r = 1; r < 4; r++)
@@ -123,7 +123,7 @@ ByteMatrix* GetWordMatrix(ByteVector* word)
     return wordMatrix;
 }
 
-void MixColumns(unsigned char state[Nb][4])
+void MixColumns(uint8_t state[Nb][4])
 {
     ByteMatrix* multiplyMatrix = NULL;
     ByteVector* toMultiply = NULL;
@@ -137,9 +137,9 @@ void MixColumns(unsigned char state[Nb][4])
 
     for (unsigned int c = 0; c < Nb; c++)
     {
-        ByteVector_SetValues(stateColumn, (unsigned char*)state + (c * 4), 4);
+        ByteVector_SetValues(stateColumn, (uint8_t*)state + (c * 4), 4);
         result = ByteMatrix_VectorMul(multiplyMatrix, stateColumn, 0, FField_Add, FField_Multiply);
-        ByteVector_GetValues(result, (unsigned char*)state + (c * 4), 4);
+        ByteVector_GetValues(result, (uint8_t*)state + (c * 4), 4);
 
         ByteVector_Del(result);
     }
@@ -148,16 +148,16 @@ void MixColumns(unsigned char state[Nb][4])
 }
 
 
-void AddRoundKey(unsigned char state[Nb][4], unsigned char* key)
+void AddRoundKey(uint8_t state[Nb][4], uint32_t* key)
 {
     for (unsigned int i = 0; i < Nb; i++)
     {
-        ((unsigned int*)state)[i] ^= ((unsigned int*)key)[i];
+        ((uint32_t*)state)[i] ^= ((uint32_t*)key)[i];
     }
 }
 
 
-void Rijndael_Cipher(unsigned char state[Nb][4], unsigned char* keySchedule, unsigned int Nr)
+void Rijndael_Cipher(uint8_t state[Nb][4], uint32_t* keySchedule, unsigned int Nr)
 {
     AddRoundKey(state, keySchedule);
 
@@ -175,26 +175,55 @@ void Rijndael_Cipher(unsigned char state[Nb][4], unsigned char* keySchedule, uns
 }
 
 
-void Rijndael_KeyExpansion(unsigned char* key, unsigned char* keySchedule, unsigned int Nk, unsigned int Nr)
+uint32_t SubWord(uint32_t word)
 {
     /*
-    word temp;
+    uint8_t* bytes = (uint8_t*)&word;
+
+    for (unsigned int i = 0; i < 4; i++)
+    {
+        bytes[i] = SBox(bytes[i]);
+    }
+
+    return word;
+    */
+
+    uint32_t sub;
+
+    for (unsigned int i = 0; i < 4; i++)
+    {
+        sub = SBox((uint8_t)word);
+        sub = sub << 8;
+        word = word >> 8;
+    }
+}
+
+uint32_t RotWord(uint32_t word)
+{
+    uint32_t rot = word >> 8;
+    rot += word << 24;
+
+    return rot;
+}
+
+void Rijndael_KeyExpansion(uint32_t* key, uint32_t* keySchedule, unsigned int Nk, unsigned int Nr)
+{
+    uint32_t temp;
 
     for (unsigned int i = 0; i < Nk; i++)
     {
-        w[i] = 
+        keySchedule[i] = key[i]; 
     }
 
     for (unsigned int i = Nk; i < (Nb * (Nr + 1)); i++)
     {
-        temp = w[i - 1];
+        temp = keySchedule[i - 1];
 
         if (i % Nk == 0)
-            temp = SubWord() ^ Rcon[]; 
+            temp = SubWord(RotWord(temp)) ^ Rcon[i / Nk]; 
         else if (Nk > 6 && i % Nk == 4)
             temp = SubWord(temp);
 
-        w[i] = w[i - Nk] ^ temp;
+        keySchedule[i] = keySchedule[i - Nk] ^ temp;
     }
-    */
 }
