@@ -72,21 +72,21 @@ unsigned char SBox(unsigned char byte)
     return byte;
 }
 
-void SubBytes(unsigned char state[4][Nb])
+void SubBytes(unsigned char state[Nb][4])
 {
-    for (unsigned int r = 0; r < 4; r++)
+    for (unsigned int c = 0; c < Nb; c++)
     {
-        for (unsigned int c = 0; c < Nb; c++)
+        for (unsigned int r = 0; r < 4; r++)
         {
-            state[r][c] = SBox(state[r][c]);
+            state[c][r] = SBox(state[c][r]);
         }
     }
 }
 
 
-void ShiftRows(unsigned char state[4][Nb])
+void ShiftRows(unsigned char state[Nb][4])
 {
-    unsigned char shifted[4][Nb];
+    unsigned char shifted[Nb][4];
     unsigned int newPos = 0;
 
     for (unsigned int r = 1; r < 4; r++)
@@ -94,12 +94,12 @@ void ShiftRows(unsigned char state[4][Nb])
         for (unsigned int c = 0; c < Nb; c++)
         {
             newPos = (c - shift_rows_amount[r]) % Nb; 
-            shifted[r][newPos] = state[r][c];
+            shifted[newPos][r] = state[c][r];
         }
 
         for (unsigned int c = 0; c < Nb; c++)
         {
-            state[r][c] = shifted[r][c];
+            state[c][r] = shifted[c][r];
         }
     }
 }
@@ -123,7 +123,7 @@ ByteMatrix* GetWordMatrix(ByteVector* word)
     return wordMatrix;
 }
 
-void MixColumns(unsigned char state[4][Nb])
+void MixColumns(unsigned char state[Nb][4])
 {
     ByteMatrix* multiplyMatrix = NULL;
     ByteVector* toMultiply = NULL;
@@ -148,33 +148,53 @@ void MixColumns(unsigned char state[4][Nb])
 }
 
 
-void AddRoundKey(unsigned char state[4][Nb], unsigned char* key)
+void AddRoundKey(unsigned char state[Nb][4], unsigned char* key)
 {
-    for (unsigned int c = 0; c < Nb; c++)
+    for (unsigned int i = 0; i < Nb; i++)
     {
-        for (unsigned int r = 0; r < 4; r++)
-        {
-            state[r][c] ^= key[(c * 4) + r];
-        }
+        ((unsigned int*)state)[i] ^= ((unsigned int*)key)[i];
     }
 }
 
-/*
-void Rijndael_Cipher(unsigned char* state, unsigned char* keything, unsigned int rounds)
+
+void Rijndael_Cipher(unsigned char state[Nb][4], unsigned char* keySchedule, unsigned int Nr)
 {
-    AddRoundKey(state, , 0);
+    AddRoundKey(state, keySchedule);
 
-
-    for (unsigned int r = 1; r < rounds; r++)
+    for (unsigned int round = 1; round < Nr; round++)
     {
         SubBytes(state);
         ShiftRows(state);
         MixColumns(state);
-        AddRoundKey(state, , r);
+        AddRoundKey(state, keySchedule + (4 * round * Nb));
     }
 
     SubBytes(state);
     ShiftRows(state);
-    AddRoundKey(state);
+    AddRoundKey(state, keySchedule + (4 * Nr * Nb));
 }
-*/
+
+
+void Rijndael_KeyExpansion(unsigned char* key, unsigned char* keySchedule, unsigned int Nk, unsigned int Nr)
+{
+    /*
+    word temp;
+
+    for (unsigned int i = 0; i < Nk; i++)
+    {
+        w[i] = 
+    }
+
+    for (unsigned int i = Nk; i < (Nb * (Nr + 1)); i++)
+    {
+        temp = w[i - 1];
+
+        if (i % Nk == 0)
+            temp = SubWord() ^ Rcon[]; 
+        else if (Nk > 6 && i % Nk == 4)
+            temp = SubWord(temp);
+
+        w[i] = w[i - Nk] ^ temp;
+    }
+    */
+}
