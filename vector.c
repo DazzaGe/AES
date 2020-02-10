@@ -11,12 +11,10 @@
 
 
 
-typedef unsigned char BYTE;
-
 typedef struct ByteVector
 {
     unsigned int    length;
-    BYTE	    data[];	
+    uint8_t	    data[];	
 } ByteVector;
 
 
@@ -51,13 +49,13 @@ unsigned int ByteVector_GetLength(ByteVector* vec)
 }
 
 
-void ByteVector_SetIndex(ByteVector* vec, unsigned int pos, BYTE value)
+void ByteVector_SetIndex(ByteVector* vec, unsigned int pos, uint8_t value)
 {
     if (pos < vec->length)
         (vec->data)[pos] = value;
 }
 
-BYTE ByteVector_GetIndex(ByteVector* vec, unsigned int pos)
+uint8_t ByteVector_GetIndex(ByteVector* vec, unsigned int pos)
 {
     if (pos < vec->length)
         return (vec->data)[pos];
@@ -66,13 +64,13 @@ BYTE ByteVector_GetIndex(ByteVector* vec, unsigned int pos)
 }
 
 
-void ByteVector_SetValues(ByteVector* vec, const BYTE* values, size_t valuesLength)
+void ByteVector_SetValues(ByteVector* vec, const uint8_t* values, size_t valuesLength)
 {
     if (valuesLength <= vec->length)
 	memcpy(&(vec->data), values, valuesLength);
 }
 
-void ByteVector_GetValues(ByteVector* vec, BYTE* toWrite, size_t amount)
+void ByteVector_GetValues(ByteVector* vec, uint8_t* toWrite, size_t amount)
 {
     if (amount <= vec->length)
         memcpy(toWrite, &(vec->data), amount);
@@ -86,7 +84,7 @@ void ByteVector_Copy(ByteVector* vec, ByteVector* copyto)
 }
 
 
-void ByteVector_Add(ByteVector* vec, ByteVector* other, BYTE (*AddFunction)(BYTE val1, BYTE val2))
+void ByteVector_Add(ByteVector* vec, ByteVector* other, uint8_t (*AddFunction)(uint8_t val1, uint8_t val2))
 {
     if (vec->length != other->length) 
         return;
@@ -97,10 +95,10 @@ void ByteVector_Add(ByteVector* vec, ByteVector* other, BYTE (*AddFunction)(BYTE
     }
 }
 
-BYTE ByteVector_Dot(ByteVector* vec, ByteVector* other, BYTE (*AddFunction)(BYTE val1, BYTE val2), BYTE (*MultiplyFunction)(BYTE val1, BYTE val2))
+uint8_t ByteVector_Dot(ByteVector* vec, ByteVector* other, uint8_t (*AddFunction)(uint8_t val1, uint8_t val2), uint8_t (*MultiplyFunction)(uint8_t val1, uint8_t val2))
 {
-    BYTE sum = 0;
-    BYTE product = 0;
+    uint8_t sum = 0;
+    uint8_t product = 0;
 
     if (vec->length != other->length)
         return 0;

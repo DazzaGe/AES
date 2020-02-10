@@ -6,6 +6,7 @@
 
 #include "rijndael.h"
 #include "finitefield.h"
+#include "matrix.h"
 
 
 
@@ -87,14 +88,14 @@ void SubBytes(uint8_t state[Nb][4])
 void ShiftRows(uint8_t state[Nb][4])
 {
     uint8_t shifted[Nb][4];
-    unsigned int newPos = 0;
+    unsigned int newColumn = 0;
 
     for (unsigned int r = 1; r < 4; r++)
     {
         for (unsigned int c = 0; c < Nb; c++)
         {
-            newPos = (c - shift_rows_amount[r]) % Nb; 
-            shifted[newPos][r] = state[c][r];
+            newColumn = (c - shift_rows_amount[r]) % Nb; 
+            shifted[newColumn][r] = state[c][r];
         }
 
         for (unsigned int c = 0; c < Nb; c++)

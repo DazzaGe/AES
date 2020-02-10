@@ -5,12 +5,14 @@
 #ifndef FFIELD_H
 #define FFIELD_H
 
+#include "stdint.h"
 
 
 
-unsigned char   FField_Add(unsigned char b1, unsigned char b2);
-unsigned char   FField_Multiply(unsigned char b1, unsigned char b2);
-unsigned char   FField_Inverse(unsigned char b1);
+
+uint8_t   FField_Add(uint8_t b1, uint8_t b2);
+uint8_t   FField_Multiply(uint8_t b1, uint8_t b2);
+uint8_t   FField_Inverse(uint8_t b1);
 
 
 

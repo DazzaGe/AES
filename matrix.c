@@ -16,7 +16,7 @@ typedef struct ByteMatrix
     unsigned int    rows;
     unsigned int    columns;
     
-    unsigned char*  data[];
+    uint8_t*  data[];
 } ByteMatrix;
 
 
@@ -29,7 +29,7 @@ ByteMatrix* ByteMatrix_New(unsigned int rows, unsigned int columns)
 
     if (rows < 1 || columns < 1) return NULL;
 
-    pointerBlockSize = rows * sizeof(unsigned char*);
+    pointerBlockSize = rows * sizeof(uint8_t*);
     size = sizeof(ByteMatrix) + pointerBlockSize + (rows * columns);
 
     newMatrix = (ByteMatrix*)malloc(size);
@@ -39,7 +39,7 @@ ByteMatrix* ByteMatrix_New(unsigned int rows, unsigned int columns)
     newMatrix->columns = columns;
     for (unsigned int i = 0; i < rows; i++)
     {
-        newMatrix->data[i] = (unsigned char*)&newMatrix->data + pointerBlockSize + (i * columns);
+        newMatrix->data[i] = (uint8_t*)&newMatrix->data + pointerBlockSize + (i * columns);
     }
 
     return newMatrix;
@@ -61,14 +61,14 @@ unsigned int ByteMatrix_GetColumns(ByteMatrix* mat)
     return mat->columns;
 }
 
-void ByteMatrix_SetIndex(ByteMatrix* mat, unsigned int row, unsigned int column, unsigned char value)
+void ByteMatrix_SetIndex(ByteMatrix* mat, unsigned int row, unsigned int column, uint8_t value)
 {
     if (row >= mat->rows || column >= mat->columns) return;
 
     mat->data[row][column] = value;
 }
 
-unsigned char ByteMatrix_GetIndex(ByteMatrix* mat, unsigned int row, unsigned int column)
+uint8_t ByteMatrix_GetIndex(ByteMatrix* mat, unsigned int row, unsigned int column)
 {
     if (row >= mat->rows || column >= mat->columns) return 0;
 
@@ -126,7 +126,7 @@ void ByteMatrix_SetColumn(ByteMatrix* mat, unsigned int column, ByteVector* vec)
 
 void ByteMatrix_SwapRows(ByteMatrix* mat, unsigned int row1, unsigned int row2)
 {
-    unsigned char* temp = NULL;
+    uint8_t* temp = NULL;
 
     if (row1 >= mat->rows || row2 >= mat->rows) return;
 
@@ -137,7 +137,7 @@ void ByteMatrix_SwapRows(ByteMatrix* mat, unsigned int row1, unsigned int row2)
 
 void ByteMatrix_SwapColumns(ByteMatrix* mat, unsigned int column1, unsigned int column2)
 {
-    unsigned char temp = 0x00;
+    uint8_t temp = 0x00;
 
     if (column1 >= mat->columns || column2 >= mat->columns) return;
 
@@ -179,7 +179,7 @@ void ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int a
 }
 
 
-void ByteMatrix_Add(ByteMatrix* mat, ByteMatrix* other, unsigned char (*AddFunction)(unsigned char val1, unsigned char val2))
+void ByteMatrix_Add(ByteMatrix* mat, ByteMatrix* other, uint8_t (*AddFunction)(uint8_t val1, uint8_t val2))
 {
     if (mat->rows != other->rows || mat->columns != other->columns) return;
 
@@ -194,13 +194,13 @@ void ByteMatrix_Add(ByteMatrix* mat, ByteMatrix* other, unsigned char (*AddFunct
 
 
 ByteMatrix* ByteMatrix_Mul(ByteMatrix* mat, ByteMatrix* other,
-                unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
-                unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2))
+                uint8_t (*AddFunction)(uint8_t val1, uint8_t val2), \
+                uint8_t (*MultiplyFunction)(uint8_t val1, uint8_t val2))
 {
     ByteMatrix* resultMat = NULL;
     ByteVector* rowVec = NULL;
     ByteVector* colVec = NULL;
-    unsigned char dotResult = 0x00;
+    uint8_t dotResult = 0x00;
 
     if (mat->columns != other->rows) return NULL;
 
@@ -222,13 +222,13 @@ ByteMatrix* ByteMatrix_Mul(ByteMatrix* mat, ByteMatrix* other,
     return resultMat;
 }
 
-ByteVector* ByteMatrix_VectorMul(ByteMatrix* mat, ByteVector* vec, unsigned char lhs,
-                unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
-                unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2))
+ByteVector* ByteMatrix_VectorMul(ByteMatrix* mat, ByteVector* vec, uint8_t lhs,
+                uint8_t (*AddFunction)(uint8_t val1, uint8_t val2), \
+                uint8_t (*MultiplyFunction)(uint8_t val1, uint8_t val2))
 {
     ByteVector* resultVec = NULL;
     ByteVector* matrixVec = NULL;
-    unsigned char dotResult = 0x00;
+    uint8_t dotResult = 0x00;
     unsigned int vecLength = 0;
 
     vecLength = ByteVector_GetLength(vec);

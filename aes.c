@@ -8,7 +8,6 @@
 #include "rijndael.h"
 #include "string.h"
 #include "stdlib.h"
-#include "stdio.h"
 
 
 

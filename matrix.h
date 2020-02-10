@@ -18,8 +18,8 @@ void            ByteMatrix_Del(ByteMatrix* mat);
 unsigned int    ByteMatrix_GetRows(ByteMatrix* mat);
 unsigned int    ByteMatrix_GetColumns(ByteMatrix* mat);
 
-void            ByteMatrix_SetIndex(ByteMatrix* mat, unsigned int row, unsigned int column, unsigned char value);
-unsigned char   ByteMatrix_GetIndex(ByteMatrix* mat, unsigned int row, unsigned int column);
+void            ByteMatrix_SetIndex(ByteMatrix* mat, unsigned int row, unsigned int column, uint8_t value);
+uint8_t   ByteMatrix_GetIndex(ByteMatrix* mat, unsigned int row, unsigned int column);
 
 ByteVector*     ByteMatrix_GetRow(ByteMatrix* mat, unsigned int row);
 void            ByteMatrix_SetRow(ByteMatrix* mat, unsigned int row, ByteVector* vec);
@@ -32,14 +32,14 @@ void            ByteMatrix_SwapColumns(ByteMatrix* mat, unsigned int column1, un
 void            ByteMatrix_ShiftRow(ByteMatrix* mat, unsigned int row, unsigned int amount);
 void            ByteMatrix_ShiftColumn(ByteMatrix* mat, unsigned int column, unsigned int amount);
 
-void            ByteMatrix_Add(ByteMatrix* mat, ByteMatrix* other, unsigned char (*AddFunction)(unsigned char val1, unsigned char val2));
+void            ByteMatrix_Add(ByteMatrix* mat, ByteMatrix* other, uint8_t (*AddFunction)(uint8_t val1, uint8_t val2));
 
 ByteMatrix*     ByteMatrix_Mul(ByteMatrix* mat, ByteMatrix* other,
-                unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
-                unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2));
-ByteVector*     ByteMatrix_VectorMul(ByteMatrix* mat, ByteVector* vec, unsigned char lhs,
-                unsigned char (*AddFunction)(unsigned char val1, unsigned char val2), \
-                unsigned char (*MultiplyFunction)(unsigned char val1, unsigned char val2));
+                uint8_t (*AddFunction)(uint8_t val1, uint8_t val2), \
+                uint8_t (*MultiplyFunction)(uint8_t val1, uint8_t val2));
+ByteVector*     ByteMatrix_VectorMul(ByteMatrix* mat, ByteVector* vec, uint8_t lhs,
+                uint8_t (*AddFunction)(uint8_t val1, uint8_t val2), \
+                uint8_t (*MultiplyFunction)(uint8_t val1, uint8_t val2));
 
 
 
