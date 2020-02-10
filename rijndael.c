@@ -156,6 +156,20 @@ void AddRoundKey(uint8_t state[Nb][4], uint32_t* key)
     }
 }
 
+/*
+#include "stdio.h"
+void PrintState_(uint8_t state[Nb][4])
+{
+    for (unsigned int r = 0; r < 4; r++)
+    {
+        for (unsigned int c = 0; c < Nb; c++)
+        {
+            printf("%u ", state[c][r]);
+        }
+        printf("\n");
+    }
+}
+*/
 
 void Rijndael_Cipher(uint8_t state[Nb][4], uint32_t* keySchedule, unsigned int Nr)
 {
@@ -166,28 +180,17 @@ void Rijndael_Cipher(uint8_t state[Nb][4], uint32_t* keySchedule, unsigned int N
         SubBytes(state);
         ShiftRows(state);
         MixColumns(state);
-        AddRoundKey(state, keySchedule + (4 * round * Nb));
+        AddRoundKey(state, keySchedule + (round * Nb));
     }
 
     SubBytes(state);
     ShiftRows(state);
-    AddRoundKey(state, keySchedule + (4 * Nr * Nb));
+    AddRoundKey(state, keySchedule + (Nr * Nb));
 }
 
 
 uint32_t SubWord(uint32_t word)
 {
-    /*
-    uint8_t* bytes = (uint8_t*)&word;
-
-    for (unsigned int i = 0; i < 4; i++)
-    {
-        bytes[i] = SBox(bytes[i]);
-    }
-
-    return word;
-    */
-
     uint32_t sub;
 
     for (unsigned int i = 0; i < 4; i++)
