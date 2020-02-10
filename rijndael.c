@@ -21,7 +21,7 @@ const uint8_t const affine_matrix_array[64] =  {1, 0, 0, 0, 1, 1, 1, 1,
 const uint8_t affine_vector = 0x63;
 const uint8_t const mixcolumns_vector[4] = {0x02, 0x01, 0x01, 0x03};
 const unsigned int shift_rows_amount[4] = {0, 1, 2, 3};
-const uint32_t const Rcon[8] = {1, 2, 4, 8, 16, 32, 64, 128};
+const uint32_t const Rcon[14] = {69, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8};
 
 
 
@@ -156,20 +156,6 @@ void AddRoundKey(uint8_t state[Nb][4], uint32_t* key)
     }
 }
 
-/*
-#include "stdio.h"
-void PrintState_(uint8_t state[Nb][4])
-{
-    for (unsigned int r = 0; r < 4; r++)
-    {
-        for (unsigned int c = 0; c < Nb; c++)
-        {
-            printf("%u ", state[c][r]);
-        }
-        printf("\n");
-    }
-}
-*/
 
 void Rijndael_Cipher(uint8_t state[Nb][4], uint32_t* keySchedule, unsigned int Nr)
 {
@@ -195,14 +181,17 @@ uint32_t SubWord(uint32_t word)
 
     for (unsigned int i = 0; i < 4; i++)
     {
-        sub = SBox((uint8_t)word);
-        sub = sub << 8;
+        sub = sub >> 8;
+        sub += SBox((uint8_t)word) << 24;
         word = word >> 8;
     }
+
+    return sub;
 }
 
 uint32_t RotWord(uint32_t word)
 {
+    // compiler must be little endian
     uint32_t rot = word >> 8;
     rot += word << 24;
 
