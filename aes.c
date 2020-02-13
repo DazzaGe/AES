@@ -21,11 +21,6 @@ void AES_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, unsig
 
     for (unsigned int i = 0; i < dataSize; i += Nb * 4)
     {
-        /*
-        if (dataSize - i < Nb * 4)
-            memset((uint8_t*)state, (Nb * 4) - (dataSize - i), Nb * 4); // padding
-        */
-
         memcpy((uint8_t*)state, data + i, Nb * 4);
 
         Rijndael_KeyExpansion((uint32_t*)key, keySchedule, Nk, Nr);
@@ -44,7 +39,7 @@ void AES_Decrypt(unsigned char* data, size_t dataSize, unsigned char* key, unsig
 
 void AES_128_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, size_t keySize, unsigned char* out, size_t outSize)
 {
-    if (keySize != 16 || dataSize != outSize)
+    if (keySize != 16 || dataSize > outSize)
         return;
 
     AES_Encrypt(data, dataSize, key, 4, 10, out, outSize);
@@ -52,7 +47,7 @@ void AES_128_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, s
 
 void AES_128_Decrypt(unsigned char* data, size_t dataSize, unsigned char* key, size_t keySize, unsigned char* out, size_t outSize)
 {
-    if (keySize != 16 || dataSize != outSize)
+    if (keySize != 16 || dataSize > outSize)
         return;
 
     AES_Decrypt(data, dataSize, key, 4, 10, out, outSize);
@@ -61,7 +56,7 @@ void AES_128_Decrypt(unsigned char* data, size_t dataSize, unsigned char* key, s
 
 void AES_192_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, size_t keySize, unsigned char* out, size_t outSize)
 {
-    if (keySize != 24 || dataSize != outSize)
+    if (keySize != 24 || dataSize > outSize)
         return;
 
     AES_Encrypt(data, dataSize, key, 6, 12, out, outSize);
@@ -69,7 +64,7 @@ void AES_192_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, s
 
 void AES_192_Decrypt(unsigned char* data, size_t dataSize, unsigned char* key, size_t keySize, unsigned char* out, size_t outSize)
 {
-    if (keySize != 24 || dataSize != outSize)
+    if (keySize != 24 || dataSize > outSize)
         return;
 
     AES_Decrypt(data, dataSize, key, 6, 12, out, outSize);
@@ -78,7 +73,7 @@ void AES_192_Decrypt(unsigned char* data, size_t dataSize, unsigned char* key, s
 
 void AES_256_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, size_t keySize, unsigned char* out, size_t outSize)
 {
-    if (keySize != 32 || dataSize != outSize)
+    if (keySize != 32 || dataSize > outSize)
         return;
 
     AES_Encrypt(data, dataSize, key, 8, 14, out, outSize);
@@ -86,7 +81,7 @@ void AES_256_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, s
 
 void AES_256_Decrypt(unsigned char* data, size_t dataSize, unsigned char* key, size_t keySize, unsigned char* out, size_t outSize)
 {
-    if (keySize != 32 || dataSize != outSize)
+    if (keySize != 32 || dataSize > outSize)
         return;
 
     AES_Decrypt(data, dataSize, key, 8, 14, out, outSize);
