@@ -61,7 +61,7 @@ void AddPadding(unsigned char* buffer, size_t size, size_t amount, padding metho
 }
 
 
-unsigned char* Encrypt(unsigned char* data, size_t dataSize, const char* key, size_t keySize, cipher algo, padding pad)
+size_t Encrypt(unsigned char* data, size_t dataSize, const char* key, size_t keySize, unsigned char** p_out, cipher algo, padding pad)
 {
     unsigned char* out = NULL;
     size_t outSize = 0;
@@ -73,7 +73,7 @@ unsigned char* Encrypt(unsigned char* data, size_t dataSize, const char* key, si
         case AES_128:
             excessAmount = dataSize % AES_128_BLOCK_LEN;
             excessBuffer = malloc(AES_128_BLOCK_LEN);
-            outSize = dataSize - excessAmount + AES_128_BLOCK_LEN;
+            outSize = excessAmount ? dataSize - excessAmount + AES_128_BLOCK_LEN : dataSize;
             out = malloc(outSize);
 
             AES_128_Encrypt((char*)data, dataSize - excessAmount, (char*)key, keySize, out, dataSize); 
@@ -96,7 +96,8 @@ unsigned char* Encrypt(unsigned char* data, size_t dataSize, const char* key, si
 
     free(excessBuffer);
 
-    return out;
+    *p_out = out;
+    return outSize;
 }
 
 void Decrypt()
@@ -107,16 +108,20 @@ void Decrypt()
 int main(int argc, const char* argv[])
 {
     unsigned char* out;
+    size_t outSize;
     Options options;
 
-    options.data = (unsigned char*)argv[0];
-    options.dataLength = strlen(argv[0]);
+    if (argc < 4)
+        return 1;
+
+    options.data = (unsigned char*)argv[1];
+    options.dataLength = strlen(argv[1]);
     options.key = NULL;
     options.encrypt = 1;
     options._cipher = AES_128;
     options._padding = ISO_10126; 
 
-    for (int i = 1; i < argc; i ++)
+    for (int i = 2; i < argc; i++)
     {
         if (argv[i][0] != '-')
             return 1;
@@ -124,6 +129,9 @@ int main(int argc, const char* argv[])
         switch(argv[i][1])
         {
             case 'k':
+                if (i == argc)
+                    return 1;
+
                 options.key = (unsigned char*)argv[i + 1];
                 options.keyLength = strlen(options.key);
                 i++;
@@ -138,28 +146,38 @@ int main(int argc, const char* argv[])
                 break;
 
             case 'c':
+                if (i == argc)
+                    return 1;
+
                 options._cipher = (int)((argv[i + 1])[0]);
                 i++;
                 break;
 
             case 'p':
+                if (i == argc)
+                    return 1;
+
                 options._padding = (int)((argv[i + 1])[0]);
                 i++;
                 break;
         }
     }
 
-
     if (options.key == NULL)
         return 1;
 
     if (options.encrypt)
-        Encrypt(options.data, options.dataLength, options.key, options.keyLength, options._cipher, options._padding);
-    else
-        Decrypt();
+        outSize = Encrypt(options.data, options.dataLength, options.key, options.keyLength, &out, options._cipher, options._padding);
+    //else
+        //outSize = Decrypt();
 
+    printf("Result Bytes: ");
+    for (unsigned int i = 0; i < outSize; i++)
+    {
+        printf("%02X ", out[i]);
+    }
+    printf("\n");
 
-    printf("%s\n", out);
     return 0;
 }
 
