@@ -5,6 +5,7 @@
 #include "main.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "string.h"
 #include "time.h"
 #include "aes.h"
 
@@ -28,8 +29,22 @@ typedef enum
 } padding;
 
 
+typedef struct 
+{
+    unsigned char*  data;
+    size_t          dataLength;
+    unsigned char*  key;
+    size_t          keyLength;
 
-void AddPadding(char* buffer, size_t size, size_t amount, padding method)
+    unsigned int    encrypt     : 1;
+    cipher          _cipher     : 4;
+    padding         _padding    : 4;
+} Options;
+
+
+
+
+void AddPadding(unsigned char* buffer, size_t size, size_t amount, padding method)
 {
     srand(time(NULL));
 
@@ -46,7 +61,7 @@ void AddPadding(char* buffer, size_t size, size_t amount, padding method)
 }
 
 
-unsigned char* Encrypt(const char* data, size_t dataSize, const char* key, size_t keySize, cipher algo)
+unsigned char* Encrypt(unsigned char* data, size_t dataSize, const char* key, size_t keySize, cipher algo, padding pad)
 {
     unsigned char* out = NULL;
     size_t outSize = 0;
@@ -64,7 +79,7 @@ unsigned char* Encrypt(const char* data, size_t dataSize, const char* key, size_
             AES_128_Encrypt((char*)data, dataSize - excessAmount, (char*)key, keySize, out, dataSize); 
             if (excessAmount > 0)
             {
-                AddPadding(excessBuffer, AES_128_BLOCK_LEN, excessAmount, ISO_10126);
+                AddPadding(excessBuffer, AES_128_BLOCK_LEN, excessAmount, pad);
                 AES_128_Encrypt(excessBuffer, AES_128_BLOCK_LEN, (char*)key, keySize, out + dataSize - excessAmount, AES_128_BLOCK_LEN);
             }
 
@@ -88,8 +103,63 @@ void Decrypt()
 {
 }
 
+
 int main(int argc, const char* argv[])
 {
+    unsigned char* out;
+    Options options;
+
+    options.data = (unsigned char*)argv[0];
+    options.dataLength = strlen(argv[0]);
+    options.key = NULL;
+    options.encrypt = 1;
+    options._cipher = AES_128;
+    options._padding = ISO_10126; 
+
+    for (int i = 1; i < argc; i ++)
+    {
+        if (argv[i][0] != '-')
+            return 1;
+
+        switch(argv[i][1])
+        {
+            case 'k':
+                options.key = (unsigned char*)argv[i + 1];
+                options.keyLength = strlen(options.key);
+                i++;
+                break;
+
+            case 'e':
+                options.encrypt = 1;
+                break;
+
+            case 'd':
+                options.encrypt = 0;
+                break;
+
+            case 'c':
+                options._cipher = (int)((argv[i + 1])[0]);
+                i++;
+                break;
+
+            case 'p':
+                options._padding = (int)((argv[i + 1])[0]);
+                i++;
+                break;
+        }
+    }
+
+
+    if (options.key == NULL)
+        return 1;
+
+    if (options.encrypt)
+        Encrypt(options.data, options.dataLength, options.key, options.keyLength, options._cipher, options._padding);
+    else
+        Decrypt();
+
+
+    printf("%s\n", out);
     return 0;
 }
 
