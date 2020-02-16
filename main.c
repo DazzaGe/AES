@@ -87,10 +87,32 @@ size_t Encrypt(unsigned char* data, size_t dataSize, const char* key, size_t key
 
         case AES_192:
             excessAmount = dataSize % AES_192_BLOCK_LEN;
+            excessBuffer = malloc(AES_192_BLOCK_LEN);
+            outSize = excessAmount ? dataSize - excessAmount + AES_192_BLOCK_LEN : dataSize;
+            out = malloc(outSize);
+
+            AES_192_Encrypt((char*)data, dataSize - excessAmount, (char*)key, keySize, out, dataSize); 
+            if (excessAmount > 0)
+            {
+                AddPadding(excessBuffer, AES_192_BLOCK_LEN, excessAmount, pad);
+                AES_192_Encrypt(excessBuffer, AES_192_BLOCK_LEN, (char*)key, keySize, out + dataSize - excessAmount, AES_192_BLOCK_LEN);
+            }
+
             break;
 
         case AES_256:
             excessAmount = dataSize % AES_256_BLOCK_LEN;
+            excessBuffer = malloc(AES_256_BLOCK_LEN);
+            outSize = excessAmount ? dataSize - excessAmount + AES_256_BLOCK_LEN : dataSize;
+            out = malloc(outSize);
+
+            AES_256_Encrypt((char*)data, dataSize - excessAmount, (char*)key, keySize, out, dataSize); 
+            if (excessAmount > 0)
+            {
+                AddPadding(excessBuffer, AES_256_BLOCK_LEN, excessAmount, pad);
+                AES_256_Encrypt(excessBuffer, AES_256_BLOCK_LEN, (char*)key, keySize, out + dataSize - excessAmount, AES_256_BLOCK_LEN);
+            }
+
             break;
     }
 
