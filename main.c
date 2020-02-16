@@ -122,8 +122,27 @@ size_t Encrypt(unsigned char* data, size_t dataSize, const char* key, size_t key
     return outSize;
 }
 
-void Decrypt()
+size_t Decrypt(unsigned char* data, size_t dataSize, const char* key, size_t keySize, unsigned char** p_out, cipher algo)
 {
+    unsigned char* out = malloc(dataSize);
+
+    switch (algo)
+    {
+        case AES_128:
+            AES_128_Decrypt((char*)data, dataSize, (char*)key, keySize, out, dataSize); 
+            break;
+
+        case AES_192:
+            AES_192_Decrypt((char*)data, dataSize, (char*)key, keySize, out, dataSize); 
+            break;
+
+        case AES_256:
+            AES_256_Decrypt((char*)data, dataSize, (char*)key, keySize, out, dataSize); 
+            break;
+    }
+
+    *p_out = out;
+    return dataSize;
 }
 
 
@@ -190,8 +209,8 @@ int main(int argc, const char* argv[])
 
     if (options.encrypt)
         outSize = Encrypt(options.data, options.dataLength, options.key, options.keyLength, &out, options._cipher, options._padding);
-    //else
-        //outSize = Decrypt();
+    else
+        outSize = Decrypt(options.data, options.dataLength, options.key, options.keyLength, &out, options._cipher);
 
     printf("Result Bytes: ");
     for (unsigned int i = 0; i < outSize; i++)

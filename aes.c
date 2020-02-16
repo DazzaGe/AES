@@ -34,6 +34,22 @@ void AES_Encrypt(unsigned char* data, size_t dataSize, unsigned char* key, unsig
 
 void AES_Decrypt(unsigned char* data, size_t dataSize, unsigned char* key, unsigned int Nk, unsigned int Nr, unsigned char* out, size_t outSize)
 {
+    uint8_t state[Nb][4];
+    uint32_t* keySchedule;
+
+    keySchedule = (uint32_t*)malloc(4 * Nb * (Nr + 1));
+
+    for (unsigned int i = 0; i < dataSize; i += Nb * 4)
+    {
+        memcpy((uint8_t*)state, data + i, Nb * 4);
+
+        Rijndael_KeyExpansion((uint32_t*)key, keySchedule, Nk, Nr);
+        Rijndael_InvCipher(state, keySchedule, Nr);
+
+        memcpy(out + i, (uint8_t*)state, Nb * 4);
+    }
+
+    free(keySchedule);
 }
 
 
