@@ -6,8 +6,8 @@
 
 #include "aes.h"
 #include "rijndael.h"
-#include "string.h"
-#include "stdlib.h"
+#include <string.h>
+#include <stdlib.h>
 
 
 
